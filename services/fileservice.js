@@ -5,8 +5,9 @@ const path = require("path");
 const  ResourceDtoList  = require("../dtos/resourceDto.js");
 
 exports.fetchFileDetails = async function(rootPath){
-    const initialPath = rootPath;
+    const initialPath = rootPath ? rootPath : '';
     rootPath = rootPath ? path.resolve(process.env.DATA_FOLDER, rootPath) : process.env.DATA_FOLDER;
+    console.log("rootpath", rootPath);
     const resourceDtoList = new ResourceDtoList();
     return await new Promise((resolve, reject) => {
         fs.readdir(rootPath, (err, files) =>{
@@ -22,7 +23,8 @@ exports.fetchFileDetails = async function(rootPath){
                 for(file of files){
                     const resourcePath = path.resolve(rootPath, file);
                     const stats = fs.statSync( resourcePath);
-                    resourceDtoList.addResource({relativePath: path.resolve(initialPath, file), isDirectory: stats.isDirectory()});
+                    // console.log("ASD", initialPath);
+                    resourceDtoList.addResource({relativePath: path.join(initialPath, file), isDirectory: stats.isDirectory()});
                 }
                 return resolve(resourceDtoList);
             } catch (err){
